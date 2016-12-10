@@ -5,6 +5,11 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import * as actionCreators from '../actions';
 
+/**
+ * Issue with redux form first render as described in bug #621:
+ * https://github.com/erikras/redux-form/issues/621
+ * https://github.com/erikras/redux-form/pull/843
+ */
 export class ProfileView extends React.Component {
 
     componentDidMount() {
@@ -37,6 +42,7 @@ export class ProfileView extends React.Component {
         return (
             <div className='col-xs-12 col-md-6 col-md-offset-3'>
                 <h3>User Profile for: {this.props.username}</h3>
+                <p>Admin: {String(this.props.admin)}</p>
                 {this.props.statusText ? <div className={'alert alert-' + alertType}>{this.props.statusText}</div> : ''}
                 {this.props.isFetching === true ? <h1>Loading data...</h1> :
                     <form role='form'>
