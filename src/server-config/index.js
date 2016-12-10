@@ -3,9 +3,9 @@
  */
 module.exports = {
     HOST: process.env.HOST || 'localhost',
-    PORT: process.env.PORT || 3001,
+    PORT: process.env.PORT || 3000,
     SECRET: 'authAPIsecret',
-    DB_URL: 'mongodb://' + (process.env.HOST || 'localhost') + '/auth-user-db',
+    DB_URL: 'mongodb://' + (process.env.HOST || 'localhost') + '/reactUsers',
 
     DB_OPTIONS: {
         server: {socketOptions: {keepAlive: 1, connectTimeoutMS: 30000}},
