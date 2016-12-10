@@ -16,7 +16,7 @@ Make sure you have installed all of the following prerequisites on your developm
 * MongoDB - [Download & Install MongoDB](http://www.mongodb.org/downloads), and make sure it's running on the default port (27017).
 
 ## Running the app
-To get the running, follow the instructions below:
+To get the app running, follow the instructions below:
 
 ````
 1. git clone https://github.com/mbarth/user-auth-react-redux-example.git
