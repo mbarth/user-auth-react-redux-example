@@ -15,6 +15,7 @@ import {
     RESET_REGISTER,
     FETCH_USER_REQUEST,
     RECEIVE_USER_DATA,
+    RECEIVE_USER_DATA_FAILURE,
     UPDATE_USER_REQUEST,
     UPDATE_USER_SUCCESS,
     UPDATE_USER_FAILURE,
@@ -47,13 +48,13 @@ export function unauthorizedRequest(error, route) {
     }
 }
 
-export function loginUserFailure(error) {
+export function loginUserFailure(status, errorMessage) {
     localStorage.removeItem('token');
     return {
         type: LOGIN_USER_FAILURE,
         payload: {
-            status: error.response.status,
-            statusText: error.response.statusText
+            status: status,
+            statusText: errorMessage
         }
     }
 }
@@ -91,26 +92,28 @@ export function loginUser(username, password, redirect = "/") {
                 'cache-control': 'no-cache'
             },
             body: JSON.stringify({username: username, password: password})
-        })
-            .then(checkHttpStatus)
-            .then(parseJSON)
-            .then(response => {
-                try {
-                    // let decoded = jwtDecode(response.token);
-                    dispatch(loginUserSuccess(response.token));
+        }).then(response =>
+            response.json().then(json => ({
+                    status: response.status,
+                    json
+                })
+            )).then(
+            // Both fetching and parsing succeeded!
+            ({status, json}) => {
+                if (status >= 400) {
+                    // Status looks bad
+                    dispatch(loginUserFailure(status, json.message));
+                } else {
+                    // Status looks good
+                    dispatch(loginUserSuccess(json.token));
                     dispatch(pushState(null, redirect));
-                } catch (e) {
-                    dispatch(loginUserFailure({
-                        response: {
-                            status: 403,
-                            statusText: 'Invalid token'
-                        }
-                    }));
                 }
-            })
-            .catch(error => {
-                dispatch(loginUserFailure(error));
-            })
+            },
+            // Either fetching or parsing failed!
+            err => {
+                dispatch(loginUserFailure(401, err));
+            }
+        );
     }
 }
 
@@ -147,7 +150,7 @@ export function fetchProtectedData(token, route) {
             })
             .catch(error => {
                 if (error.response.status === 401) {
-                    dispatch(loginUserFailure(error));
+                    dispatch(loginUserFailure(error.response.status, error.response.statusText));
                     dispatch(pushState(null, '/login'));
                 } else if (error.response.status === 403) {
                     dispatch(unauthorizedRequest(error, route));
@@ -175,11 +178,12 @@ export function resetRegisterVariables() {
     }
 }
 
-export function registerUserSuccess(message, user) {
+export function registerUserSuccess(status, message, user) {
     localStorage.removeItem('token');
     return {
         type: REGISTER_USER_SUCCESS,
         payload: {
+            status: status,
             statusText: message,
             username: user.username,
             admin: user.admin
@@ -230,14 +234,14 @@ export function registerUser(username, password, admin) {
                     dispatch(registerUserFailure(status, json.message));
                 } else {
                     // Status looks good
-                    dispatch(registerUserSuccess(json.message, json.user));
+                    dispatch(registerUserSuccess(status, json.message, json.user));
                     dispatch(resetDataStatus());
                     dispatch(pushState(null, '/login'));
                 }
             },
             // Either fetching or parsing failed!
             err => {
-                dispatch(registerUserFailure(status, err));
+                dispatch(registerUserFailure(400, err));
             }
         );
     }
@@ -258,6 +262,16 @@ export function receiveUserData(data) {
     }
 }
 
+export function receiveUserDataFailure(status, statusText) {
+    return {
+        type: RECEIVE_USER_DATA_FAILURE,
+        payload: {
+            status: status,
+            statusText: statusText
+        }
+    }
+}
+
 export function fetchUser(token) {
     let decoded = jwtDecode(token);
     return (dispatch, state) => {
@@ -274,13 +288,7 @@ export function fetchUser(token) {
                 dispatch(receiveUserData(response));
             })
             .catch(error => {
-                if (error.response.status === 401) {
-                    dispatch(loginUserFailure(error));
-                    dispatch(pushState(null, '/login'));
-                } else if (error.response.status === 403) {
-                    dispatch(unauthorizedRequest(error, route));
-                    dispatch(pushState(null, '/'));
-                }
+                dispatch(receiveUserDataFailure(error.response.status, error.response.statusText));
             })
     }
 }
@@ -295,11 +303,12 @@ export function updateUserFailure(error, message) {
     }
 }
 
-export function updateUserSuccess(message, user) {
+export function updateUserSuccess(status, message, user) {
 
     return {
         type: UPDATE_USER_SUCCESS,
         payload: {
+            status: status,
             statusText: message,
             username: user.username,
             admin: user.admin
@@ -354,12 +363,12 @@ export function updateUser(token, password, admin) {
                     // Status looks good
                     dispatch(updateAuthToken(json.token, json.user));
                     dispatch(resetDataStatus());
-                    dispatch(updateUserSuccess(json.message, json.user));
+                    dispatch(updateUserSuccess(status, json.message, json.user));
                 }
             },
             // Either fetching or parsing failed!
             err => {
-                dispatch(updateUserFailure(status, err));
+                dispatch(updateUserFailure(400, err));
             }
         );
     }
