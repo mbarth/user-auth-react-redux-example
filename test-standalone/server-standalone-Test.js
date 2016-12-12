@@ -1,7 +1,7 @@
 /**
  * Created by Marcelo on 2016-12-03.
  */
-let config = require('../src/server-config');
+let config = require('../src/server-config/index');
 let chai = require('chai');
 let chaiHttp = require('chai-http');
 let should = chai.should();
@@ -12,7 +12,7 @@ chai.use(chaiHttp);
 /**
  * Variables
  */
-let port = 3000
+let port = process.env.PORT || 3000
 let API_ENDPOINT = process.env.API_ENDPOINT || 'http://localhost:' + port
 let adminUserId = null;
 let adminToken = null;
@@ -215,8 +215,6 @@ describe('Example API tests:', () => {
             .end((err, res) => {
                 expect(res).to.have.status(404);
                 expect(res.notFound).to.equal(true);
-                expect(res.error).not.be.empty;
-                expect(res.body.message).to.equal(config.USER_NOT_FOUND);
                 done();
             });
     });
