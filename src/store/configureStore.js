@@ -12,7 +12,6 @@ export default function configureStore(initialState) {
     const logger = createLogger();
 
     const middleware = applyMiddleware(thunk, logger);
-    // const middleware = applyMiddleware(thunk, logger)(createStore);
 
     createStoreWithMiddleware = compose(
         middleware,
@@ -20,7 +19,6 @@ export default function configureStore(initialState) {
     );
 
     const store = createStoreWithMiddleware(createStore)(rootReducer, initialState);
-    // const store = createStoreWithMiddleware(rootReducer, initialState)(createStore);
 
     if (module.hot) {
         module.hot
