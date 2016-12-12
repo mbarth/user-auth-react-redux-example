@@ -12,7 +12,7 @@ function getUsers(req, res) {
     //Query the DB and if no errors, send all the users
     let query = User.find({});
     query.exec((err, users) => {
-        if (err) return res.send(err.message);
+        if (err) return res.send({success: false, message: err.toString(), err});
         //If no errors, send them back to the client
         return res.json({success: true, users});
     });
@@ -42,7 +42,7 @@ function getUser(req, res) {
     User.findById(req.params.id, (err, user) => {
         if (err || !user) {
             if (!user) {
-                return res.status(404).json({success: false, message: config.USER_NOT_FOUND, user});
+                return res.status(404).send();
             }
             return res.status(400).json({success: false, message: err.toString(), err});
         }
@@ -76,8 +76,8 @@ function updateUser(req, res) {
      */
     if (typeof(req.body.admin) !== 'undefined' && typeof(req.body.password) !== 'undefined') {
         User.findOne(query, (err, user) => {
-            if (!user) return res.status(404).send(err);
-            if (err) return res.status(400).send(err);
+            if (!user) return res.status(404).send({success: false, message: config.USER_NOT_FOUND, err});
+            if (err) return res.status(400).send({success: false, message: err.toString(), err});
             user.password = req.body.password;
             user.admin = req.body.admin;
             //If found, attempt to save changes
