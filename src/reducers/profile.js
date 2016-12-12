@@ -5,6 +5,7 @@ import {createReducer} from '../utils';
 import {
     FETCH_USER_REQUEST,
     RECEIVE_USER_DATA,
+    RECEIVE_USER_DATA_FAILURE,
     UPDATE_USER_REQUEST,
     UPDATE_USER_SUCCESS,
     UPDATE_USER_FAILURE,
@@ -33,6 +34,11 @@ export default createReducer(initialState, {
             'admin': payload.data.user.admin,
             'isFetching': false,
             'statusText': null
+        });
+    },
+    [RECEIVE_USER_DATA_FAILURE]: (state, payload) => {
+        return Object.assign({}, state, {
+            'statusText': `Retrieve User Error: ${payload.status} ${payload.statusText}`
         });
     },
     [UPDATE_USER_REQUEST]: (state, payload) => {
