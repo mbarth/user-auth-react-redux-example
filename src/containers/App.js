@@ -36,11 +36,11 @@ export default class CoreLayout extends React.Component {
                         </div>
                         <div className="collapse navbar-collapse" id="navbar">
                             <ul className="nav navbar-nav navbar-right">
-                                <li><Link to="/admin/protected">Admin Data</Link></li>
-                                <li><Link to="/protected">User Data</Link></li>
-                                {this.props.isAuthenticated ? <li><Link to="/profile">Profile</Link></li> : ''}
-                                {!this.props.isAuthenticated ? <li><Link to="/register">Register</Link></li> : ''}
-                                {!this.props.isAuthenticated ? <li><Link to="/login">Login</Link></li> : ''}
+                                <li><Link to="/admin/protected" activeStyle={{ color: 'red' }}>Admin Data</Link></li>
+                                <li><Link to="/protected" activeStyle={{ color: 'red' }}>User Data</Link></li>
+                                {this.props.isAuthenticated ? <li><Link to="/profile" activeStyle={{ color: 'red' }}>Profile</Link></li> : ''}
+                                {!this.props.isAuthenticated ? <li><Link to="/register" activeStyle={{ color: 'red' }}>Register</Link></li> : ''}
+                                {!this.props.isAuthenticated ? <li><Link to="/login" activeStyle={{ color: 'red' }}>Login</Link></li> : ''}
                                 {this.props.isAuthenticated ?
                                     <li><a href='#' onClick={() => this.props.dispatch(logoutAndRedirect())}>Logout</a>
                                     </li>
