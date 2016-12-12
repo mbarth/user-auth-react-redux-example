@@ -39,10 +39,10 @@ export class ProfileView extends React.Component {
 
     render() {
         let alertType = this.props.isUpdated ? 'info' : 'danger';
+        let isAdmin = this.props.admin !== null ? '(' + String(this.props.admin) + ')' : '';
         return (
             <div className='col-xs-12 col-md-6 col-md-offset-3'>
                 <h3>User Profile for: {this.props.username}</h3>
-                <p>Admin: {String(this.props.admin)}</p>
                 {this.props.statusText ? <div className={'alert alert-' + alertType}>{this.props.statusText}</div> : ''}
                 {this.props.isFetching === true ? <h1>Loading data...</h1> :
                     <form role='form'>
@@ -60,7 +60,7 @@ export class ProfileView extends React.Component {
                             <label>
                                 <input type='checkbox'
                                        checkedLink={linkedState(this, 'admin')}/>
-                                <span>An Admin</span>
+                                <span>An Admin {isAdmin}</span>
                             </label>
                         </div>
                         <button type='submit'
