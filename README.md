@@ -14,6 +14,7 @@ Make sure you have installed all of the following prerequisites on your developm
 * Git - [Download & Install Git](https://git-scm.com/downloads).
 * Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the [npm package manager](https://www.npmjs.com/).
 * MongoDB - [Download & Install MongoDB](http://www.mongodb.org/downloads), and make sure it's running on the default port (27017).
+* Mocha - [Use NPM to install Mocha](https://www.npmjs.com/package/mocha), run command: ```npm install mocha -g```.
 
 ## Running the app
 To get the app running, follow the instructions below:
