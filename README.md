@@ -26,6 +26,47 @@ To get the app running, follow the instructions below:
 ````
 Then visit `localhost:3000` in your browser.
 
+## Testing
+There are 2 test suites. One to test the react front-end and another to test the node REST API.
+
+#### To test the React front-end, run:
+```
+npm run mocha
+```
+
+#### To test the REST API:
+One terminal run the app:
+```
+node server.js
+```
+In another terminal, run the test suite:
+```
+mocha test-standalone
+```
+
+## Securing form submissions with SSL
+
+This is an example auth app that serves only to highlight how an API would be 
+written and consumed using a node server and a react front-end. In this 
+example, the login and register forms are submitting clear text data. In 
+a production environment we would update this to work over SSL. The changes 
+involved would be to redirect the two ```/login``` and ```/register``` react 
+routes through to HTTPS. On the node server side, we would use an ```HTTPS``` 
+server.
+ 
+Here's some sample code:
+```
+const https = require('https');
+
+const options = {
+  key: fs.readFileSync('test/fixtures/keys/agent2-key.pem'),
+  cert: fs.readFileSync('test/fixtures/keys/agent2-cert.cert')
+};
+
+// Create an HTTPS service identical to the HTTP service.
+https.createServer(options, app).listen(443);
+```
+
 ## License
 
 Everything in this repo is MIT License unless otherwise specified.
