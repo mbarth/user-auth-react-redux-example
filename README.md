@@ -21,10 +21,10 @@ To get the app running, follow the instructions below:
 ````
 1. git clone https://github.com/mbarth/user-auth-react-redux-example.git
 2. npm install
-3. export NODE_ENV=development
+3. edit the .env file (set the port you want to run on, default set to 3000)
 4. node server.js
 ````
-Then visit `localhost:3000` in your browser.
+Then visit `localhost:3000` in your browser (using the port you selected in the .env file).
 
 ## Testing
 There are 2 test suites. One to test the react front-end and another to test the node REST API.
