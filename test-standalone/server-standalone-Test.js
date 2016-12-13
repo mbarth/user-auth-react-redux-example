@@ -1,19 +1,21 @@
 /**
  * Created by Marcelo on 2016-12-03.
  */
-let config = require('../src/server-config/index');
-let chai = require('chai');
-let chaiHttp = require('chai-http');
-let should = chai.should();
-let expect = chai.expect;
+const mongoose = require('mongoose');
+const User = require('../src/models/user');
+const config = require('../src/server-config/index');
+const chai = require('chai');
+const chaiHttp = require('chai-http');
+const should = chai.should();
+const expect = chai.expect;
 
 chai.use(chaiHttp);
 
 /**
  * Variables
  */
-let port = process.env.PORT || 3000
-let API_ENDPOINT = process.env.API_ENDPOINT || 'http://localhost:' + port
+const port = process.env.PORT || 3000
+const API_ENDPOINT = process.env.API_ENDPOINT || 'http://localhost:' + port
 let adminUserId = null;
 let adminToken = null;
 let userId = null;
@@ -24,30 +26,43 @@ describe('Example API tests:', () => {
      * Some setup to get a token to work
      */
     before((done) => {
-        let admin = {
-            username: 'admin',
-            password: 'password',
-            admin: true
-        }
-        chai.request(API_ENDPOINT)
-            .post('/register')
-            .send(admin)
-            .end((err, res) => {
-                expect(res).to.have.status(200);
-                expect(res).to.be.json;
-                expect(res.body.success).to.equal(true);
-                expect(res.body.message).to.equal(config.USER_ADDED);
-                expect(res.body.user.password).to.not.equal('password');
-                adminUserId = res.body.user._id;
-                chai.request(API_ENDPOINT)
-                    .post('/api/authenticate')
-                    .send(admin)
-                    .end((err, res) => {
-                        expect(res).to.have.status(200);
-                        adminToken = res.body.token;
-                        done();
-                    });
-            });
+        //db connection
+        mongoose.Promise = global.Promise;
+        mongoose.connect(config.DB_URL, config.DB_OPTIONS); // connect to our database
+        // clear out any users to start
+        User.remove({}, (err, result) => {
+            if (err) {
+                console.log(err)
+                expect(err).to.be.empty;
+            }
+            expect(result.result.ok).to.equal(1);
+
+            let admin = {
+                username: 'admin',
+                password: 'password',
+                admin: true
+            }
+            chai.request(API_ENDPOINT)
+                .post('/register')
+                .send(admin)
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    expect(res).to.be.json;
+                    expect(res.body.success).to.equal(true);
+                    expect(res.body.message).to.equal(config.USER_ADDED);
+                    expect(res.body.user.password).to.not.equal('password');
+                    adminUserId = res.body.user._id;
+                    chai.request(API_ENDPOINT)
+                        .post('/api/authenticate')
+                        .send(admin)
+                        .end((err, res) => {
+                            expect(res).to.have.status(200);
+                            adminToken = res.body.token;
+                            done();
+                        });
+                });
+
+        });
     });
 
     it('POST /register: Should fail registration, no password', (done) => {
