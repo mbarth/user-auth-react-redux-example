@@ -8,6 +8,7 @@ module.exports = {
     DB_URL: 'mongodb://' + (process.env.HOST || 'localhost') + '/reactUsers',
 
     DB_OPTIONS: {
+        promiseLibrary: require('bluebird'),
         server: {socketOptions: {keepAlive: 1, connectTimeoutMS: 30000}},
         replset: {socketOptions: {keepAlive: 1, connectTimeoutMS: 30000}}
     },

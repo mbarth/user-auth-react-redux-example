@@ -30,7 +30,6 @@ app.use(webpackHotMiddleware(compiler));
 
 
 //db connection
-mongoose.Promise = global.Promise;
 mongoose.connect(serverConfig.DB_URL, serverConfig.DB_OPTIONS); // connect to our database
 let db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
